@@ -64,6 +64,15 @@ if ! [ "$interval_seconds" -gt 0 ]; then
     die "Second arg - interval_seconds - must be an integer greater than zero!"
 fi
 
+# canonicalize to full path so we can find it from a new support-bundle dir
+jdk="$(readlink -f "$jdk")"
+
+support_bundle_dir="support-bundle-$(date '+%F_%H%M')"
+
+mkdir -p -v "$support_bundle_dir"
+
+cd "$support_bundle_dir"
+
 if [ -n "$jdk" ]; then
     if ! [ -f "$jdk/bin/jstack" ]; then
         die "Fifth arg - jdk - must be a directory containing a JDK with jstack!"
@@ -97,3 +106,10 @@ for ((i=1; i <= num_iterations; i++)); do
     echo
 done
 timestamp "All dump iterations completed"
+echo >&2
+timestamp "Tarring $support_bundle_dir"
+cd ..
+tarball="$support_bundle_dir.tar.gz"
+tar czvf "$tarball" "$support_bundle_dir"
+echo >&2
+timestamp "Support bundle ready: $tarball"
