@@ -2,7 +2,7 @@
 #  vim:ts=4:sts=4:sw=4:et
 #
 #  Author: Hari Sekhon
-#  Date: 2024-08-28 21:02:58 +0200 (Wed, 28 Aug 2024)
+#  Date: 2024-08-28 23:03:58 +0200 (Wed, 28 Aug 2024)
 #
 #  https///github.com/HariSekhon/DevOps-Bash-tools
 #
@@ -22,15 +22,13 @@ srcdir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # shellcheck disable=SC2034,SC2154
 usage_description="
-Wrapper to download and run the CFR command line java decompiler
+Wrapper to download and run the Procyon command line java decompiler
 
 Examples:
 
     ${0##*/} Main.class > Main.java
 
     ${0##*/} myapp.jar
-
-    ${0##*/} myapp.jar --outputdir ./myapp-java-code/
 "
 
 # used by usage() in lib/utils.sh
@@ -42,15 +40,15 @@ usage_args="<jar_or_java.class>"
 
 min_args 1 "$@"
 
-cfr_jar="$srcdir/cfr.jar"
+procyon_jar="$srcdir/procyon-decompiler.jar"
 
-if ! [ -f "$cfr_jar" ]; then
+if ! [ -f "$procyon_jar" ]; then
     pushd "$srcdir"
-    ../install/download_cfr_jar.sh
+    ../install/download_procyon_jar.sh
     timestamp
     echo -n "Symlinking: " >&2
-    ln -sv cfr-*.jar "${cfr_jar##*/}"
+    ln -sv procyon-*.jar "${procyon_jar##*/}"
     popd
 fi
 
-java -jar "$cfr_jar" "$@"
+java -jar "$procyon_jar" "$@"
